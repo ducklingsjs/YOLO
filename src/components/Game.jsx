@@ -7,7 +7,6 @@ import { Popup } from '../components/Popup/Popup';
 
 import level_img from '../levels/floor-13.png';
 import level from '../levels/f13.json';
-import LoginComponent from './LoginComponent/LoginComponent';
 
 import { Sidebar } from './Sidebar/Sidebar';
 import './MainScreen/MainScreen.css';
@@ -69,25 +68,28 @@ const Player = styled.div`
 `;
 
 class Game extends React.Component {
-  constructor() {
-    super();
+  constructor(...args) {
+    super(...args);
     this.state = {
       myTurn: false,
       pos: 0,
       others: {},
       currentEvent: null,
-      username: null,
       moving: false,
       gameMessages: [{ text: 'Hello players!!!' }],
     };
   }
 
-  connected() {
+  componentDidMount() {
+    const {username} = this.props;
+
+    console.log(username)
+
     this.socket = io('http://10.1.130.95:3000', {
       transports: ['websocket', 'polling'],
     });
 
-    this.socket.emit('msg', `${this.username.replace(/:/g, '')}:${0}`);
+    this.socket.emit('msg', `${username.replace(/:/g, '')}:${0}`);
 
     this.socket.on('msg', (msg) => {
       console.log(msg);
@@ -95,13 +97,13 @@ class Game extends React.Component {
       if (msg.startsWith('event:')) {
         this.setState({ currentEvent: JSON.parse(msg.substring(6)) });
       } else if (msg.startsWith('host:')) {
-        if (msg.substring(5) === this.username) {
+        if (msg.substring(5) === username) {
           this.setState({ myTurn: true });
         }
       } else if (msg.startsWith('nextplayer:')) {
         this.setState({ currentEvent: null });
 
-        if (msg.substring(11) === this.username) {
+        if (msg.substring(11) === username) {
           this.setState({ myTurn: true });
         } else {
           this.socket.emit('chat', {
@@ -177,12 +179,13 @@ class Game extends React.Component {
   }
 
   roll = async (value) => {
+    const {username} = this.props;
     const { pos } = this.state;
     const npos = (pos + value) % level.length;
 
-    this.socket.emit('msg', `${this.username.replace(/:/g, '')}:${npos}`);
+    this.socket.emit('msg', `${username.replace(/:/g, '')}:${npos}`);
     this.socket.emit('chat', {
-      text: `${this.username.replace(/:/g, '')} moved to position ${npos}!`,
+      text: `${username.replace(/:/g, '')} moved to position ${npos}!`,
     });
 
     if (!value) {
@@ -204,9 +207,10 @@ class Game extends React.Component {
   };
 
   rollback = async (value) => {
+    const {username} = this.props;
     const { pos } = this.state;
     const npos = (pos + value) % level.length;
-    this.socket.emit('msg2', `${this.username.replace(/:/g, '')}:${npos}`);
+    this.socket.emit('msg2', `${username.replace(/:/g, '')}:${npos}`);
     this.socket.emit('chat', {
       text: `${this.username.replace(
         /:/g,
@@ -232,14 +236,14 @@ class Game extends React.Component {
   };
 
   render() {
+    const {username} = this.props;
     const { pos, others, currentEvent, myTurn, gameMessages } = this.state;
-    if (!this.state.username) return <LoginComponent />;
     return (
       <div className="layout">
         <div
           style={{
             position: 'fixed',
-            left: 0,
+            left: '100px',
             zIndex: 9999,
             opacity: myTurn && !currentEvent ? 1 : 0.7,
           }}
@@ -248,7 +252,7 @@ class Game extends React.Component {
             disabled={!(myTurn && !currentEvent)}
             onRoll={this.roll}
             rollingTime={500}
-            cheatValue={1}
+            size={160}
           />
         </div>
         <div
@@ -265,9 +269,8 @@ class Game extends React.Component {
                 {i}
               </Point>
             ))}
-            <Player x={level[pos][0]} y={level[pos][1]} />
             {Object.entries(others)
-              .filter(([playername]) => playername !== this.username)
+              .filter(([playername]) => playername !== username)
               .map(([playername, position]) => (
                 <Player
                   key={playername}
@@ -275,6 +278,7 @@ class Game extends React.Component {
                   y={level[position][1]}
                 />
               ))}
+              <Player x={level[pos][0]} y={level[pos][1]} />
           </Map>
 
           {currentEvent ? (
