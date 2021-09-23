@@ -81,11 +81,11 @@ class Game extends React.Component {
   }
 
   componentDidMount() {
-    const {username} = this.props;
+    const { username } = this.props;
 
-    console.log(username)
+    console.log(username);
 
-    this.socket = io('http://10.1.130.95:3000', {
+    this.socket = io('http://localhost:3000', {
       transports: ['websocket', 'polling'],
     });
 
@@ -179,7 +179,7 @@ class Game extends React.Component {
   }
 
   roll = async (value) => {
-    const {username} = this.props;
+    const { username } = this.props;
     const { pos } = this.state;
     const npos = (pos + value) % level.length;
 
@@ -207,7 +207,7 @@ class Game extends React.Component {
   };
 
   rollback = async (value) => {
-    const {username} = this.props;
+    const { username } = this.props;
     const { pos } = this.state;
     const npos = (pos + value) % level.length;
     this.socket.emit('msg2', `${username.replace(/:/g, '')}:${npos}`);
@@ -236,7 +236,7 @@ class Game extends React.Component {
   };
 
   render() {
-    const {username} = this.props;
+    const { username } = this.props;
     const { pos, others, currentEvent, myTurn, gameMessages } = this.state;
     return (
       <div className="layout">
@@ -278,7 +278,7 @@ class Game extends React.Component {
                   y={level[position][1]}
                 />
               ))}
-              <Player x={level[pos][0]} y={level[pos][1]} />
+            <Player x={level[pos][0]} y={level[pos][1]} />
           </Map>
 
           {currentEvent ? (
@@ -311,7 +311,7 @@ class Game extends React.Component {
         <Sidebar
           gameMessages={gameMessages}
           players={Object.keys(others).length}
-          username={this.username}
+          username={this.props.username}
           onChatWrite={(message) => {
             this.socket.emit('chat', message);
           }}
