@@ -54,7 +54,7 @@ io.on('connection', (socket) => {
       setTimeout(
         () => {
           if (!currentEvent && currentEvent !== 0) {
-            currentEvent = Math.random() * events.length;
+            currentEvent = Math.floor(Math.random() * events.length) % events.length;
             const scenarioIndex = scenarios.findIndex(({ step }) =>
               step.includes(parseInt(position)),
             );
