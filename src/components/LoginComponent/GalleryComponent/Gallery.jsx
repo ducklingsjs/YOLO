@@ -700,6 +700,7 @@ export default function Gallery({ selectedAvatar, onNameSelect }) {
                 width="100px"
                 height="100px"
                 src={image}
+                className="avatar"
                 onClick={() => onNameSelect(person)}
               />
             );

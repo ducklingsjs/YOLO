@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import Gallery from './GalleryComponent/Gallery';
 import './LoginComponent.css';
 
@@ -26,21 +26,25 @@ export default function LoginComponent(props) {
           name="Username"
           placeholder="Type in your username..."
         />
-        <input
-          onChange={handleSelectedAvatar}
-          value={selectedAvatar}
-          type="text"
-          name="Search avatar"
-          placeholder="Search avatar"
-        ></input>
+        {username && (
+          <input
+            onChange={handleSelectedAvatar}
+            value={selectedAvatar}
+            type="text"
+            name="Search avatar"
+            placeholder="Search avatar"
+          ></input>
+        )}
       </div>
-      <Gallery
-        selectedAvatar={selectedAvatar}
-        onNameSelect={(name) => {
-          props.onNameSelect(name);
-          props.onUsernameSelect(username);
-        }}
-      />
+      {username && (
+        <Gallery
+          selectedAvatar={selectedAvatar}
+          onNameSelect={(name) => {
+            props.onNameSelect(name);
+            props.onUsernameSelect(username);
+          }}
+        />
+      )}
     </div>
   );
 }

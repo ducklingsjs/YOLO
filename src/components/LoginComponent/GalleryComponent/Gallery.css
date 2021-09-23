@@ -1,6 +1,6 @@
 .gallery {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   overflow-x: scroll;
   align-items: center;
   flex-wrap: wrap;
@@ -8,4 +8,14 @@
   border: 1px solid black;
   width: 100%;
   height: 30%;
+}
+
+.avatar {
+  border-radius: 100%;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.avatar:hover {
+  transform: scale(1.05);
 }
