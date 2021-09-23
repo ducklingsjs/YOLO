@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { MainScreen } from './components/MainScreen/MainScreen';
 
 function App() {
   return (
     <div className="App">
+      <MainScreen />
     </div>
   );
 }

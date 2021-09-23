@@ -8,7 +8,8 @@
   },
   "dependencies": {
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "styled-components": "^5.3.1"
   },
   "devDependencies": {
     "@snowpack/plugin-dotenv": "^2.1.0",
@@ -17,7 +18,10 @@
     "@testing-library/react": "^11.2.6",
     "@web/test-runner": "^0.13.3",
     "chai": "^4.3.4",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
     "prettier": "^2.2.1",
-    "snowpack": "^3.3.7"
+    "snowpack": "^3.3.7",
+    "socket.io": "^4.2.0"
   }
 }
