@@ -1,0 +1,40 @@
+[
+  {
+  "step": [26],
+  "title": "Hey! Stop right there",
+  "description": "I've checked you schedule and seems like you didn't clocked for the whole week! (-1 step reduced)",
+  "confirm": "On it!",
+  "confirmAction": -1
+},
+{
+  "step": [25, 27],
+  "title": "Hey!!",
+  "description": "Please prepare a demo for todays meeting!",
+  "confirm": "M'kay 🙄",
+  "cancel": "Why always me? 🤨",
+  "confirmAction": 0,
+  "cancelAction": -1,
+},
+{
+  "step": [5,6,12],
+  "title": "Hi there!",
+  "description": "You are called on a urgent meeting!",
+  "confirm": "Ohh, okay 🙄",
+  "confirmAction": 0,
+}, {
+  "step": [10],
+  "title": "Oii!",
+  "description": "Your package arrived, please stay here and sign!",
+  "confirm": "Okay",
+  "confirmAction": 0,
+},
+{
+  "step": [3, 15],
+  "title": "You are in a toillete",
+  "description": "Too much beer... but seems like you have to wait your turn..",
+  "confirm": "Wait.. 😤",
+  "cancel": "Piss in the sink 🤫",
+  "confirmAction": 0,
+  "cancelAction": -3,
+},
+]
