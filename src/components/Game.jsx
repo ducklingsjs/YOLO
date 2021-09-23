@@ -8,6 +8,9 @@ import { Popup } from '../components/Popup/Popup';
 import level_img from '../levels/floor-13.png';
 import level from '../levels/f13.json';
 
+import { Sidebar } from './Sidebar/Sidebar';
+import './MainScreen/MainScreen.css';
+
 const getPointColorForType = ({ type }) => {
   switch (type) {
     case 'start':
@@ -73,12 +76,13 @@ class Game extends React.Component {
       others: {},
       currentEvent: null,
       moving: false,
+      gameMessages: [{ text: 'Hello players!!!' }],
     };
   }
   componentDidMount() {
     this.username = prompt('Username?');
 
-    this.socket = io('http://10.1.130.95:3000', {
+    this.socket = io('http://localhost:3000', {
       transports: ['websocket', 'polling'],
     });
 
@@ -95,8 +99,13 @@ class Game extends React.Component {
         }
       } else if (msg.startsWith('nextplayer:')) {
         this.setState({ currentEvent: null });
+
         if (msg.substring(11) === this.username) {
           this.setState({ myTurn: true });
+        } else {
+          this.socket.emit('chat', {
+            text: `It's ${msg.substring(11)}'s turn`,
+          });
         }
       } else if (msg.includes(':')) {
         const { others } = this.state;
@@ -158,12 +167,22 @@ class Game extends React.Component {
         goByOne(1);
       }
     });
+      
+    this.socket.on('chat', (msg) => {
+      this.setState((prevState) => ({
+        gameMessages: [...prevState.gameMessages, msg],
+      }));
+    });
   }
 
   roll = async (value) => {
     const { pos } = this.state;
     const npos = (pos + value) % level.length;
+
     this.socket.emit('msg', `${this.username.replace(/:/g, '')}:${npos}`);
+    this.socket.emit('chat', {
+      text: `${this.username.replace(/:/g, '')} moved to position ${npos}!`,
+    });
 
     if (!value) {
       this.setState({ moving: false });
@@ -207,13 +226,14 @@ class Game extends React.Component {
   };
 
   render() {
-    const { pos, others, currentEvent, myTurn } = this.state;
+    const { pos, others, currentEvent, myTurn, gameMessages } = this.state;
 
     return (
-      <>
+      <div className="layout">
         <div
           style={{
             position: 'fixed',
+            left: 0,
             zIndex: 9999,
             opacity: myTurn && !currentEvent ? 1 : 0.7,
           }}
@@ -225,7 +245,14 @@ class Game extends React.Component {
             cheatValue={1}
           />
         </div>
-        <div style={{ ...(!myTurn ? { pointerEvents: 'none' } : {}) }}>
+        <div
+          style={{
+            ...(!myTurn ? { pointerEvents: 'none' } : {}),
+            marginRight: '40px',
+            position: 'relative',
+            width: '900px',
+          }}
+        >
           <Map y={-100}>
             {level.map(([x, y, type], i) => (
               <Point x={x} y={y} type={type} key={`${x},${y}`}>
@@ -271,7 +298,11 @@ class Game extends React.Component {
             </div>
           ) : null}
         </div>
-      </>
+        <Sidebar
+          gameMessages={gameMessages}
+          players={Object.keys(others).length}
+        />
+      </div>
     );
   }
 }
