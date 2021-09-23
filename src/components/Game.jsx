@@ -245,14 +245,15 @@ class Game extends React.Component {
 
   render() {
     const { username, name } = this.props;
-    const { pos, others, currentEvent, myTurn, gameMessages, names } = this.state;
+    const { pos, others, currentEvent, myTurn, gameMessages, names } =
+      this.state;
     return (
       <div className="layout">
         <div
           style={{
             position: 'fixed',
             left: '100px',
-            zIndex: 9999,
+            zIndex: 9998,
             opacity: myTurn && !currentEvent ? 1 : 0.7,
           }}
         >
