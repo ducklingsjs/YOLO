@@ -1,34 +1,66 @@
-const app = require('express')();
+const express = require('express');
+const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 const cors = require('cors');
 const port = process.env.PORT || 3000;
 
+const events = require('./src/levels/events.json');
+const level = require('./src/levels/f13.json');
+
 app.use(cors());
+app.use(express.static('build'));
 
 const players = {};
 const orderOfPlayers = [];
 let currentPlayer = 0;
+let currentEvent = null;
+
+app.get('/', (req, res) => res.send('hello'))
 
 io.on('connection', (socket) => {
   socket.on('msg', (msg) => {
     const [username, position] = msg.split(':');
     socket.username = username;
 
+    console.log('orderOfPlayers', orderOfPlayers);
     if (!orderOfPlayers.length) {
       io.emit('msg', `host:${username}`);
     }
 
     if (!orderOfPlayers.includes(username)) {
-      console.log(`New player - ${username}${!orderOfPlayers.length ? ' - also host' : ''}`);
+      console.log(
+        `New player - ${username}${
+          !orderOfPlayers.length ? ' - also host' : ''
+        }`,
+      );
       orderOfPlayers.push(username);
-    } else if (msg.startsWith('p:')) {
-      currentPlayer = (currentPlayer + 1) % orderOfPlayers.length;
-      io.emit('msg', `nextplayer:${orderOfPlayers[currentPlayer]}`);
-      console.log(`Next player - ${orderOfPlayers[currentPlayer]}`);
+    } else {
+      if (!currentEvent && currentEvent !== 0) {
+        currentPlayer = (currentPlayer + 1) % orderOfPlayers.length;
+      }
+
+      let diceValue = parseInt(position) - players[username];
+      if (diceValue < 0) {
+        if (diceValue < -6) diceValue = -diceValue;
+        else diceValue += level.length;
+      }
+
+      setTimeout(
+        () => {
+          if (!currentEvent && currentEvent !== 0) {
+            currentEvent = 0;
+            io.emit('msg', `event:${JSON.stringify(events[currentEvent])}`);
+          } else {
+            currentEvent = null;
+            io.emit('msg', `nextplayer:${orderOfPlayers[currentPlayer]}`);
+            console.log(`Next player - ${orderOfPlayers[currentPlayer]}`);
+          }
+        },
+        diceValue > 6 ? 1 : (diceValue - 1) * 500,
+      );
     }
     players[username] = parseInt(position);
-
     io.emit('msg', msg);
   });
 

@@ -1,6 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import '../socket.io.min.js';
+import Dice from 'react-dice-roll';
+
+import { Popup } from '../components/Popup/Popup';
 
 import level_img from '../levels/floor-13.png';
 import level from '../levels/f13.json';
@@ -68,28 +71,30 @@ class Game extends React.Component {
       myTurn: false,
       pos: 0,
       others: {},
+      currentEvent: null,
     };
   }
   componentDidMount() {
     this.username = prompt('Username?');
 
-    window.roll = this.roll;
-
-    this.socket = io('http://localhost:3000', {
+    this.socket = io('http://10.1.130.95:3000', {
       transports: ['websocket', 'polling'],
     });
 
-    this.socket.emit(`user:${this.user}`);
+    this.socket.emit('msg', `${this.username.replace(/:/g, '')}:${0}`);
 
     this.socket.on('msg', (msg) => {
       console.log(msg);
 
-      if (msg.startsWith('host:')) {
+      if (msg.startsWith('event:')) {
+        this.setState({ currentEvent: JSON.parse(msg.substring(6)) });
+      } else if (msg.startsWith('host:')) {
         if (msg.substring(5) === this.username) {
           this.setState({ myTurn: true });
         }
       } else if (msg.startsWith('nextplayer:')) {
-        if (msg.substring(5) === this.username) {
+        this.setState({ currentEvent: null });
+        if (msg.substring(11) === this.username) {
           this.setState({ myTurn: true });
         }
       } else if (msg.includes(':')) {
@@ -127,7 +132,6 @@ class Game extends React.Component {
   roll = async (value) => {
     const { pos } = this.state;
     const npos = (pos + value) % level.length;
-    this.setState({ myTurn: false });
     this.socket.emit('msg', `${this.username.replace(/:/g, '')}:${npos}`);
 
     if (value > 6) {
@@ -142,27 +146,61 @@ class Game extends React.Component {
   };
 
   render() {
-    const { pos, others } = this.state;
+    const { pos, others, currentEvent, myTurn } = this.state;
     return (
-      <div>
-        <Map y={-100}>
-          {level.map(([x, y, type], i) => (
-            <Point x={x} y={y} type={type} key={`${x},${y}`}>
-              {i}
-            </Point>
-          ))}
-          <Player x={level[pos][0]} y={level[pos][1]} />
-          {Object.entries(others)
-            .filter(([playername]) => playername !== this.username)
-            .map(([playername, position]) => (
-              <Player
-                key={playername}
-                x={level[position][0]}
-                y={level[position][1]}
-              />
+      <>
+        <div
+          style={{
+            position: 'fixed',
+            zIndex: 9999,
+            opacity: myTurn && !currentEvent ? 1 : 0.7,
+          }}
+        >
+          <Dice
+            disabled={!(myTurn && !currentEvent)}
+            onRoll={this.roll}
+            rollingTime={500}
+          />
+        </div>
+        <div style={{ ...(!myTurn ? { pointerEvents: 'none' } : {}) }}>
+          <Map y={-100}>
+            {level.map(([x, y, type], i) => (
+              <Point x={x} y={y} type={type} key={`${x},${y}`}>
+                {i}
+              </Point>
             ))}
-        </Map>
-      </div>
+            <Player x={level[pos][0]} y={level[pos][1]} />
+            {Object.entries(others)
+              .filter(([playername]) => playername !== this.username)
+              .map(([playername, position]) => (
+                <Player
+                  key={playername}
+                  x={level[position][0]}
+                  y={level[position][1]}
+                />
+              ))}
+          </Map>
+
+          {currentEvent ? (
+            <div style={{ opacity: myTurn ? 1 : 0.5 }}>
+              <Popup
+                title={currentEvent.title}
+                confirmText={currentEvent.confirm}
+                cancelText={currentEvent.cancel}
+                description={currentEvent.description}
+                onConfirm={() => {
+                  this.setState({ myTurn: false });
+                  this.roll(1);
+                }}
+                onCancel={() => {
+                  this.setState({ myTurn: false });
+                  this.roll(1);
+                }}
+              />
+            </div>
+          ) : null}
+        </div>
+      </>
     );
   }
 }
