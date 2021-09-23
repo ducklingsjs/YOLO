@@ -37,10 +37,6 @@
   text-align: center;
 }
 
-.popup-window {
-  margin-top: -600px;
-}
-
 .popup-window p {
   font-size: 18px;
   max-width: 350px;

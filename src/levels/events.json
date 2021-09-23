@@ -3,6 +3,8 @@
     "title": "Hey you!!!!!!",
     "description": "Do you want to proceed with the game?",
     "confirm": "Yes",
-    "cancel": "No, I don't"
+    "cancel": "No, I don't",
+    "confirmAction": 1,
+    "cancelAction": 0
   }
 ]
