@@ -686,12 +686,25 @@ export const people = {
 
 export default function Gallery({ selectedAvatar, onNameSelect }) {
   return (
-    <div className="gallery">
-      {Object.entries(people)
-        .filter(([person, image]) => person.toLowerCase().includes(selectedAvatar.toLowerCase()))
-        .map(([person, image]) => {
-          return <img key={person} width="100px" height="100px" src={image} onClick={() => onNameSelect(person)}></img>;
-        })}
+    <div>
+      <h3>Choose avatar</h3>
+      <div className="gallery">
+        {Object.entries(people)
+          .filter(([person, image]) =>
+            person.toLowerCase().includes(selectedAvatar.toLowerCase()),
+          )
+          .map(([person, image]) => {
+            return (
+              <img
+                key={person}
+                width="100px"
+                height="100px"
+                src={image}
+                onClick={() => onNameSelect(person)}
+              />
+            );
+          })}
+      </div>
     </div>
   );
 }

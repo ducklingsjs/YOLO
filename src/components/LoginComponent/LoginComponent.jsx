@@ -16,35 +16,31 @@ export default function LoginComponent(props) {
 
   return (
     <div className="login-component">
+      <h2>Welcome to DILPJ 👋</h2>
+
       <div className="inputs">
-        <label htmlFor="Username">Username</label>
         <input
           onChange={handleUsername}
           value={username}
           type="text"
           name="Username"
+          placeholder="Type in your username..."
+        />
+        <input
+          onChange={handleSelectedAvatar}
+          value={selectedAvatar}
+          type="text"
+          name="Search avatar"
+          placeholder="Search avatar"
         ></input>
-        {username ? (
-          <>
-            <label htmlFor="Search avatar">Search avatar</label>
-            <input
-              onChange={handleSelectedAvatar}
-              value={selectedAvatar}
-              type="text"
-              name="Search avatar"
-            ></input>
-          </>
-        ) : null}
       </div>
-      {username ? (
-        <Gallery
-          selectedAvatar={selectedAvatar}
-          onNameSelect={(name) => {
-            props.onNameSelect(name);
-            props.onUsernameSelect(username);
-          }}
-        ></Gallery>
-      ) : null}
+      <Gallery
+        selectedAvatar={selectedAvatar}
+        onNameSelect={(name) => {
+          props.onNameSelect(name);
+          props.onUsernameSelect(username);
+        }}
+      />
     </div>
   );
 }
