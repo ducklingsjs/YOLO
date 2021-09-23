@@ -72,6 +72,7 @@ class Game extends React.Component {
       pos: 0,
       others: {},
       currentEvent: null,
+      moving: false,
     };
   }
   componentDidMount() {
@@ -112,7 +113,8 @@ class Game extends React.Component {
           else diceValue += level.length;
         }
 
-        if (isNewUser || diceValue > 6) {
+        if (!diceValue) {
+        } else if (isNewUser || diceValue > 6) {
           this.setState({
             others: { ...this.state.others, [playername]: position },
           });
@@ -127,6 +129,35 @@ class Game extends React.Component {
         }
       }
     });
+
+    this.socket.on('msg2', (msg) => {
+      const { others } = this.state;
+      const [playername, posString] = msg.split(':');
+
+      const oldPos = others[playername];
+      const position = parseInt(posString);
+
+      let diceValue =  position - oldPos;
+      if (diceValue < 0) {
+        if (diceValue < -6) diceValue = -diceValue;
+        else diceValue += level.length;
+      }
+
+      if (!diceValue) {
+      } else if (diceValue > 6) {
+        this.setState({
+          others: { ...this.state.others, [playername]: position },
+        });
+      } else {
+        const goByOne = (i) => {
+          this.setState({
+            others: { ...this.state.others, [playername]: oldPos - i },
+          });
+          if (i < diceValue) setTimeout(() => goByOne(i + 1), 500);
+        };
+        goByOne(1);
+      }
+    });
   }
 
   roll = async (value) => {
@@ -134,12 +165,42 @@ class Game extends React.Component {
     const npos = (pos + value) % level.length;
     this.socket.emit('msg', `${this.username.replace(/:/g, '')}:${npos}`);
 
+    if (!value) {
+      this.setState({ moving: false });
+      return;
+    }
+
     if (value > 6) {
       this.setState({ pos: npos });
     } else {
+      this.setState({ moving: true });
       const goByOne = (i) => {
         this.setState({ pos: (pos + i) % level.length });
         if (i < value) setTimeout(() => goByOne(i + 1), 500);
+        else this.setState({ moving: false });
+      };
+      goByOne(1);
+    }
+  };
+
+  rollback = async (value) => {
+    const { pos } = this.state;
+    const npos = (pos + value) % level.length;
+    this.socket.emit('msg2', `${this.username.replace(/:/g, '')}:${npos}`);
+
+    if (!value) {
+      this.setState({ moving: false });
+      return;
+    }
+
+    if (value > 6) {
+      this.setState({ pos: npos });
+    } else {
+      this.setState({ moving: true });
+      const goByOne = (i) => {
+        this.setState({ pos: (pos - i) % level.length });
+        if (i < value) setTimeout(() => goByOne(i + 1), 500);
+        else this.setState({ moving: false });
       };
       goByOne(1);
     }
@@ -147,6 +208,7 @@ class Game extends React.Component {
 
   render() {
     const { pos, others, currentEvent, myTurn } = this.state;
+
     return (
       <>
         <div
@@ -160,6 +222,7 @@ class Game extends React.Component {
             disabled={!(myTurn && !currentEvent)}
             onRoll={this.roll}
             rollingTime={500}
+            cheatValue={1}
           />
         </div>
         <div style={{ ...(!myTurn ? { pointerEvents: 'none' } : {}) }}>
@@ -190,11 +253,19 @@ class Game extends React.Component {
                 description={currentEvent.description}
                 onConfirm={() => {
                   this.setState({ myTurn: false });
-                  this.roll(1);
+                  if (currentEvent.confirmAction < 0) {
+                    this.rollback(-currentEvent.confirmAction);
+                  } else {
+                    this.roll(currentEvent.confirmAction);
+                  }
                 }}
                 onCancel={() => {
                   this.setState({ myTurn: false });
-                  this.roll(1);
+                  if (currentEvent.cancelAction < 0) {
+                    this.rollback(-currentEvent.cancelAction);
+                  } else {
+                    this.roll(currentEvent.cancelAction);
+                  }
                 }}
               />
             </div>
