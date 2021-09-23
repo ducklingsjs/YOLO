@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import AutoCompleteComponent from './AutoCompleteComponent';
-import SquareComponent from './SquareComponent';
+import React from 'react';
+import { MainScreen } from './components/MainScreen/MainScreen';
 
 function App() {
   return (
     <div className="App">
-      <SquareComponent maxNumber="10"></SquareComponent>
-      <AutoCompleteComponent></AutoCompleteComponent>
+      <MainScreen />
     </div>
   );
 }
