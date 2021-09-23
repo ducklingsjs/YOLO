@@ -7,7 +7,7 @@ import { Popup } from '../components/Popup/Popup';
 
 import level_img from '../levels/floor-13.png';
 import level from '../levels/f13.json';
-import LoginComponent from './LoginComponent/Logincomponent.jsx';
+import LoginComponent from './LoginComponent/LoginComponent';
 
 import { Sidebar } from './Sidebar/Sidebar';
 import './MainScreen/MainScreen.css';
@@ -207,7 +207,12 @@ class Game extends React.Component {
     const { pos } = this.state;
     const npos = (pos + value) % level.length;
     this.socket.emit('msg2', `${this.username.replace(/:/g, '')}:${npos}`);
-
+    this.socket.emit('chat', {
+      text: `${this.username.replace(
+        /:/g,
+        '',
+      )} was forced to move back to position ${npos}!`,
+    });
     if (!value) {
       this.setState({ moving: false });
       return;
