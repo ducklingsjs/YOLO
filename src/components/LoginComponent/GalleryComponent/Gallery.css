@@ -1,0 +1,11 @@
+.gallery {
+  display: flex;
+  justify-content: center;
+  overflow-x: scroll;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 12px;
+  border: 1px solid black;
+  width: 50%;
+  height: 30%;
+}

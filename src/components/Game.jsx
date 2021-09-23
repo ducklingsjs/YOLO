@@ -7,6 +7,7 @@ import { Popup } from '../components/Popup/Popup';
 
 import level_img from '../levels/floor-13.png';
 import level from '../levels/f13.json';
+import LoginComponent from './LoginComponent/Logincomponent.jsx';
 
 const getPointColorForType = ({ type }) => {
   switch (type) {
@@ -72,11 +73,11 @@ class Game extends React.Component {
       pos: 0,
       others: {},
       currentEvent: null,
+      username: null,
     };
   }
-  componentDidMount() {
-    this.username = prompt('Username?');
 
+  connected() {
     this.socket = io('http://10.1.130.95:3000', {
       transports: ['websocket', 'polling'],
     });
@@ -147,6 +148,7 @@ class Game extends React.Component {
 
   render() {
     const { pos, others, currentEvent, myTurn } = this.state;
+    if (!this.state.username) return <LoginComponent />;
     return (
       <>
         <div
