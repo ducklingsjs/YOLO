@@ -19,6 +19,10 @@ let currentEvent = null;
 app.get('/', (req, res) => res.send('hello'))
 
 io.on('connection', (socket) => {
+  socket.on('chat', (msg) => {
+    io.emit('chat', msg);
+  });
+
   socket.on('msg', (msg) => {
     const [username, position] = msg.split(':');
     socket.username = username;
