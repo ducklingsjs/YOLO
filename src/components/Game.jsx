@@ -307,6 +307,10 @@ class Game extends React.Component {
         <Sidebar
           gameMessages={gameMessages}
           players={Object.keys(others).length}
+          username={this.username}
+          onChatWrite={(message) => {
+            this.socket.emit('chat', message);
+          }}
         />
       </div>
     );
