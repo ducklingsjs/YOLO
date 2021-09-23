@@ -85,12 +85,12 @@ class Game extends React.Component {
   }
 
   componentDidMount() {
-    const { username, name } = this.props;
     const { names } = this.state;
+    const { username, name } = this.props;
 
     console.log(username);
 
-    this.socket = io('http://10.1.130.95:3000', {
+    this.socket = io('http://localhost:3000', {
       transports: ['websocket', 'polling'],
     });
 
@@ -324,6 +324,10 @@ class Game extends React.Component {
         <Sidebar
           gameMessages={gameMessages}
           players={Object.keys(others).length}
+          username={this.props.username}
+          onChatWrite={(message) => {
+            this.socket.emit('chat', message);
+          }}
         />
       </div>
     );

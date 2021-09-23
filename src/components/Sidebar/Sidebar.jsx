@@ -1,18 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
 import './Sidebar.css';
 
-export const Sidebar = ({ players, gameMessages }) => {
+export const Sidebar = ({ players, username, gameMessages, onChatWrite }) => {
   const [message, setMessage] = useState('');
-  const username = 'buha';
 
   const messagesRef = useRef();
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter' && Boolean(event.target.value.trim())) {
-      setMessages((prevState) => [
-        ...prevState,
-        { text: event.target.value, username },
-      ]);
+      onChatWrite({ text: event.target.value, username });
       setMessage('');
     }
   };
@@ -36,14 +32,14 @@ export const Sidebar = ({ players, gameMessages }) => {
         ))}
       </div>
 
-      {/* <textarea
+      <textarea
         type="text"
         rows={5}
         value={message}
         placeholder="Taunt you enemies..."
         onKeyPress={handleKeyPress}
         onChange={(event) => setMessage(event.target.value)}
-      /> */}
+      />
     </div>
   );
 };
