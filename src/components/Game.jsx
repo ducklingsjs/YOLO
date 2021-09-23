@@ -233,7 +233,7 @@ class Game extends React.Component {
         <div
           style={{
             position: 'fixed',
-            left: 0,
+            left: '100px',
             zIndex: 9999,
             opacity: myTurn && !currentEvent ? 1 : 0.7,
           }}
@@ -242,7 +242,7 @@ class Game extends React.Component {
             disabled={!(myTurn && !currentEvent)}
             onRoll={this.roll}
             rollingTime={500}
-            cheatValue={1}
+            size={160}
           />
         </div>
         <div
@@ -259,7 +259,6 @@ class Game extends React.Component {
                 {i}
               </Point>
             ))}
-            <Player x={level[pos][0]} y={level[pos][1]} />
             {Object.entries(others)
               .filter(([playername]) => playername !== this.username)
               .map(([playername, position]) => (
@@ -269,6 +268,7 @@ class Game extends React.Component {
                   y={level[position][1]}
                 />
               ))}
+              <Player x={level[pos][0]} y={level[pos][1]} />
           </Map>
 
           {currentEvent ? (
