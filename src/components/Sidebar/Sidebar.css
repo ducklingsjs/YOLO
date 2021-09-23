@@ -1,0 +1,46 @@
+.sidebar {
+  width: 250px;
+  border: 1px solid turquoise;
+
+  box-shadow: 7px 6px 5px darkturquoise;
+}
+
+.sidebar h3 {
+  margin: 30px 0 20px;
+  padding-left: 10px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid turquoise;
+  text-transform: uppercase;
+}
+
+.messages {
+  height: 400px;
+  padding: 5px;
+  overflow-y: auto;
+}
+
+.message {
+  padding: 5px 2px;
+}
+.message p {
+  font-size: 14px;
+  margin: 0;
+  font-weight: 600;
+}
+.message span {
+  font-size: 700;
+  color: orchid;
+}
+
+textarea {
+  padding: 5px;
+  width: 100%;
+  border: none;
+  font-size: 16px;
+  outline: none;
+  resize: vertical;
+}
+
+textarea:focus {
+  outline: none;
+}
