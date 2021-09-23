@@ -24,15 +24,27 @@ export default function LoginComponent(props) {
           type="text"
           name="Username"
         ></input>
-        <label htmlFor="Search avatar">Search avatar</label>
-        <input
-          onChange={handleSelectedAvatar}
-          value={selectedAvatar}
-          type="text"
-          name="Search avatar"
-        ></input>
+        {username ? (
+          <>
+            <label htmlFor="Search avatar">Search avatar</label>
+            <input
+              onChange={handleSelectedAvatar}
+              value={selectedAvatar}
+              type="text"
+              name="Search avatar"
+            ></input>
+          </>
+        ) : null}
       </div>
-      <Gallery selectedAvatar={selectedAvatar}></Gallery>
+      {username ? (
+        <Gallery
+          selectedAvatar={selectedAvatar}
+          onNameSelect={(name) => {
+            props.onNameSelect(name);
+            props.onUsernameSelect(username);
+          }}
+        ></Gallery>
+      ) : null}
     </div>
   );
 }

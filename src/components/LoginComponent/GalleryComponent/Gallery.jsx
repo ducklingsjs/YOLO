@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import AdisMustedanagic from '../../../Resized/Adis Mustedanagic.png';
 import AdrianBićanić from '../../../Resized/Adrian Bićanić.png';
 import AdrianoGrgić from '../../../Resized/Adriano Grgić.png';
@@ -341,7 +341,7 @@ import ŽeljkoPlesac from '../../../Resized/Željko Plesac.png';
 import ŽeljkoTrogrlić from '../../../Resized/Željko Trogrlić.png';
 import './Gallery.css';
 
-const people = {
+export const people = {
   'Adis Mustedanagic': AdisMustedanagic,
   'Adrian Bićanić': AdrianBićanić,
   'Adriano Grgić': AdrianoGrgić,
@@ -684,13 +684,13 @@ const people = {
   'Željko Trogrlić': ŽeljkoTrogrlić,
 };
 
-export default function Gallery({ selectedAvatar }) {
+export default function Gallery({ selectedAvatar, onNameSelect }) {
   return (
     <div className="gallery">
-      {Object.values(people)
-        .filter((person) => person.includes(selectedAvatar))
-        .map((person) => {
-          return <img width="25" height="45" key={person} src={person}></img>;
+      {Object.entries(people)
+        .filter(([person, image]) => person.toLowerCase().includes(selectedAvatar.toLowerCase()))
+        .map(([person, image]) => {
+          return <img key={person} width="100px" height="100px" src={image} onClick={() => onNameSelect(person)}></img>;
         })}
     </div>
   );
