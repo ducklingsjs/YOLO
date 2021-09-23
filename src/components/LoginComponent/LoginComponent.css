@@ -1,0 +1,8 @@
+.login-component {
+  display: flex;
+  padding: 12px;
+}
+
+.inputs {
+  margin-bottom: 20px;
+}
