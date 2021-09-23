@@ -1,9 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import './Sidebar.css';
 
-const PLAYERS_LENGTH = 4;
-
-export const Sidebar = ({ gameMessages }) => {
+export const Sidebar = ({ players, gameMessages }) => {
   const [message, setMessage] = useState('');
   const username = 'buha';
 
@@ -25,7 +23,7 @@ export const Sidebar = ({ gameMessages }) => {
 
   return (
     <div className="sidebar">
-      <h3>{PLAYERS_LENGTH} players active</h3>
+      <h3>{players} players active</h3>
 
       <div className="messages" ref={messagesRef}>
         {gameMessages.map((message, index) => (

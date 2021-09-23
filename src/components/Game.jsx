@@ -141,7 +141,6 @@ class Game extends React.Component {
       this.setState((prevState) => ({
         gameMessages: [...prevState.gameMessages, msg],
       }));
-      console.log('CHAT', msg);
     });
   }
 
@@ -229,7 +228,10 @@ class Game extends React.Component {
             </div>
           ) : null}
         </div>
-        <Sidebar gameMessages={gameMessages} />
+        <Sidebar
+          gameMessages={gameMessages}
+          players={Object.keys(others).length}
+        />
       </div>
     );
   }
