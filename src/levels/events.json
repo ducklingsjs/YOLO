@@ -6,5 +6,45 @@
     "cancel": "No, I don't",
     "confirmAction": 1,
     "cancelAction": 0
+  },
+  {
+    "title": "Deadline",
+    "description": "There is a deadline, do you push without testing?",
+    "confirm": "Who writes tests anyways?",
+    "cancel": "No, I don't",
+    "confirmAction": -5,
+    "cancelAction": 1
+  },
+  {
+    "title": "QA Found a bug",
+    "description": "Do you fix it immediately or put it in backlog?",
+    "confirm": "Fix now.",
+    "cancel": "All bugs should rot in backlog",
+    "confirmAction": 1,
+    "cancelAction": 3
+  },
+  {
+    "title": "You encountered implementation issue",
+    "description": "Do you hack it to save time or take the longer route?",
+    "confirm": "ONLY HACKZ",
+    "cancel": "My code has zero technical debt",
+    "confirmAction": -2,
+    "cancelAction": 2
+  },
+  {
+    "title": "You heard a black humour joke the day before",
+    "description": "Do you tell it in front of the colleagues?",
+    "confirm": "Yes",
+    "cancel": "No",
+    "confirmAction": -3,
+    "cancelAction": 1
+  },
+  {
+    "title": "You got drunk and lost your Mac",
+    "description": "Do you admit to Moroa you lost it or say someone stole it?",
+    "confirm": "I admit your honor",
+    "cancel": "Fake it 'till you make it",
+    "confirmAction": 0,
+    "cancelAction": -2
   }
 ]

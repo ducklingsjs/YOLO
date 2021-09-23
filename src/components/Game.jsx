@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import '../socket.io.min.js';
 import Dice from 'react-dice-roll';
 
+import { people } from './LoginComponent/GalleryComponent/Gallery.jsx';
 import { Popup } from '../components/Popup/Popup';
 
 import level_img from '../levels/floor-13.png';
@@ -65,6 +66,8 @@ const Player = styled.div`
   background-color: white;
   border: solid 4px ${({ other }) => (other ? 'gray' : 'black')};
   transition: all 0.5s;
+  background: url(${({ photo }) => photo});
+  background-size: contain;
 `;
 
 class Game extends React.Component {
@@ -77,11 +80,13 @@ class Game extends React.Component {
       currentEvent: null,
       moving: false,
       gameMessages: [{ text: 'Hello players!!!' }],
+      names: {},
     };
   }
 
   componentDidMount() {
-    const { username } = this.props;
+    const { names } = this.state;
+    const { username, name } = this.props;
 
     console.log(username);
 
@@ -89,7 +94,7 @@ class Game extends React.Component {
       transports: ['websocket', 'polling'],
     });
 
-    this.socket.emit('msg', `${username.replace(/:/g, '')}:${0}`);
+    this.socket.emit('msg', `${username.replace(/:/g, '')}:${0}:${name}`);
 
     this.socket.on('msg', (msg) => {
       console.log(msg);
@@ -112,7 +117,9 @@ class Game extends React.Component {
         }
       } else if (msg.includes(':')) {
         const { others } = this.state;
-        const [playername, posString] = msg.split(':');
+        const [playername, posString, name] = msg.split(':');
+        names[username] = name;
+        this.setState({ names });
 
         const isNewUser = !Object.keys(others).includes(playername);
 
@@ -144,7 +151,8 @@ class Game extends React.Component {
 
     this.socket.on('msg2', (msg) => {
       const { others } = this.state;
-      const [playername, posString] = msg.split(':');
+      const [playername, posString, name] = msg.split(':');
+      this.setState({ names: { ...this.state.names, [username]: name } });
 
       const oldPos = others[playername];
       const position = parseInt(posString);
@@ -179,11 +187,11 @@ class Game extends React.Component {
   }
 
   roll = async (value) => {
-    const { username } = this.props;
+    const { username, name } = this.props;
     const { pos } = this.state;
     const npos = (pos + value) % level.length;
 
-    this.socket.emit('msg', `${username.replace(/:/g, '')}:${npos}`);
+    this.socket.emit('msg', `${username.replace(/:/g, '')}:${npos}:${name}`);
     this.socket.emit('chat', {
       text: `${username.replace(/:/g, '')} moved to position ${npos}!`,
     });
@@ -236,8 +244,8 @@ class Game extends React.Component {
   };
 
   render() {
-    const { username } = this.props;
-    const { pos, others, currentEvent, myTurn, gameMessages } = this.state;
+    const { username, name } = this.props;
+    const { pos, others, currentEvent, myTurn, gameMessages, names } = this.state;
     return (
       <div className="layout">
         <div
@@ -276,9 +284,14 @@ class Game extends React.Component {
                   key={playername}
                   x={level[position][0]}
                   y={level[position][1]}
+                  photo={people[names[playername]]?.replace(/ /g, '%20')}
                 />
               ))}
-            <Player x={level[pos][0]} y={level[pos][1]} />
+            <Player
+              x={level[pos][0]}
+              y={level[pos][1]}
+              photo={people[name].replace(/ /g, '%20')}
+            />
           </Map>
 
           {currentEvent ? (
